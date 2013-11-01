@@ -1,6 +1,7 @@
 import sys
 from pybrain.structure import FeedForwardNetwork, LinearLayer, SigmoidLayer, FullConnection
 from pybrain.datasets import SupervisedDataSet
+from pybrain.supervised.trainers import BackpropTrainer
 
 def read_array( letter ):
     FILE_SIZE = 40 * 40 # image size is 40x40
@@ -74,12 +75,25 @@ def prepare_dataset():
     w_array = read_array( "w" )
     # Create dataset
     dataset = SupervisedDataSet( 1600, 3 )
-    
+    # add all samples to dataset
+    dataset.addSample( d_array, d_morse_array )
+    dataset.addSample( g_array, g_morse_array )
+    dataset.addSample( k_array, k_morse_array )
+    dataset.addSample( o_array, o_morse_array )
+    dataset.addSample( r_array, r_morse_array )
+    dataset.addSample( s_array, s_morse_array )
+    dataset.addSample( u_array, u_morse_array )
+    dataset.addSample( w_array, w_morse_array )
     return dataset
 
-def main():
+def train_network():
     network = create_network()
     dataset = prepare_dataset()
+    trainer = BackpropTrainer( network, dataset )
+    trainer.trainUntilConvergence()
+
+def main():
+    train_network()
 
 if __name__ == "__main__":
     main()
