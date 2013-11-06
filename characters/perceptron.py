@@ -89,8 +89,14 @@ def prepare_dataset():
     return dataset
 
 def train_network( network, dataset ):
-    TRAIN_EPOCHS = 1000
-    trainer = BackpropTrainer( network, dataset )
+    TRAIN_EPOCHS = 100
+    LEARNING_RATE = 0.01
+    LRDECAY = 1.0
+    MOMENTUM = 0.0
+    VERBOSE = False
+    BATCHLEARNING = False
+    WEIGHTDECAY = 0.0
+    trainer = BackpropTrainer( network, dataset ,learningrate=LEARNING_RATE, lrdecay=LRDECAY, momentum=MOMENTUM, verbose=VERBOSE, batchlearning=BATCHLEARNING, weightdecay=WEIGHTDECAY )
     for i in range( TRAIN_EPOCHS ):
         trainer.trainEpochs( 5 )
     return trainer
