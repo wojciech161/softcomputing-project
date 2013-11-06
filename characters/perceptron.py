@@ -1,7 +1,8 @@
 import sys
 from pybrain.structure import FeedForwardNetwork, LinearLayer, SigmoidLayer, FullConnection
-from pybrain.datasets import SupervisedDataSet
+from pybrain.datasets import ClassificationDataSet
 from pybrain.supervised.trainers import BackpropTrainer
+from pybrain.utilities           import percentError
 
 def read_array( letter ):
     FILE_SIZE = 40 * 40 # image size is 40x40
@@ -31,10 +32,10 @@ def create_network():
     # Create layers
     NUMBER_OF_INPUT_BYTES = 1600 # because at input we have picture 40x40 size
     NUMBER_OF_HIDDEN_LAYERS = 10 # number of hidden layers
-    NUMBER_OF_OUTPUT_BYTES = 3 # because in output we have 3 bytes (for example 010: ".-." in morse code)
+    NUMBER_OF_OUTPUT_CLASSES = 8 # because in output we have 8 classes
     inLayer = LinearLayer( NUMBER_OF_INPUT_BYTES )
     hiddenLayer = SigmoidLayer( NUMBER_OF_HIDDEN_LAYERS )
-    outLayer = LinearLayer( NUMBER_OF_OUTPUT_BYTES )
+    outLayer = LinearLayer( NUMBER_OF_OUTPUT_CLASSES )
     # Create connections between layers
     # We create FullConnection - each neuron of one layer is connected to each neuron of other layer
     in_to_hidden = FullConnection( inLayer, hiddenLayer )
@@ -56,14 +57,14 @@ def create_network():
 
 def prepare_dataset():
     # Prepare output coding. "-" is 1 "." is 0
-    d_morse_array = ( 1, 0, 0 ) # D -.. - 100
-    g_morse_array = ( 1, 1, 0 ) # G --. - 110
-    k_morse_array = ( 1, 0, 1 ) # K -.- - 101
-    o_morse_array = ( 1, 1, 1 ) # O --- - 111
-    r_morse_array = ( 0, 1, 0 ) # R .-. - 010
-    s_morse_array = ( 0, 0, 0 ) # S ... - 000
-    u_morse_array = ( 0, 0, 1 ) # U ..- - 001
-    w_morse_array = ( 0, 1, 1 ) # W .-- - 011
+    d_morse_array = '100' # ( 1, 0, 0 ) # D -.. - 100
+    g_morse_array = '110' # ( 1, 1, 0 ) # G --. - 110
+    k_morse_array = '101' # ( 1, 0, 1 ) # K -.- - 101
+    o_morse_array = '111' # ( 1, 1, 1 ) # O --- - 111
+    r_morse_array = '010' # ( 0, 1, 0 ) # R .-. - 010
+    s_morse_array = '000' # ( 0, 0, 0 ) # S ... - 000
+    u_morse_array = '001' # ( 0, 0, 1 ) # U ..- - 001
+    w_morse_array = '011' # ( 0, 1, 1 ) # W .-- - 011
     # Load learning data
     d_array = read_array( "d" )
     g_array = read_array( "g" )
@@ -74,26 +75,35 @@ def prepare_dataset():
     u_array = read_array( "u" )
     w_array = read_array( "w" )
     # Create dataset
-    dataset = SupervisedDataSet( 1600, 3 )
+    dataset = ClassificationDataSet( 1600, nb_classes=8, class_labels=[d_morse_array,g_morse_array,k_morse_array,o_morse_array,r_morse_array,s_morse_array,u_morse_array,w_morse_array] )
     # add all samples to dataset
-    dataset.addSample( d_array, d_morse_array )
-    dataset.addSample( g_array, g_morse_array )
-    dataset.addSample( k_array, k_morse_array )
-    dataset.addSample( o_array, o_morse_array )
-    dataset.addSample( r_array, r_morse_array )
-    dataset.addSample( s_array, s_morse_array )
-    dataset.addSample( u_array, u_morse_array )
-    dataset.addSample( w_array, w_morse_array )
+    dataset.addSample( d_array, [0] )
+    dataset.addSample( g_array, [1] )
+    dataset.addSample( k_array, [2] )
+    dataset.addSample( o_array, [3] )
+    dataset.addSample( r_array, [4] )
+    dataset.addSample( s_array, [5] )
+    dataset.addSample( u_array, [6] )
+    dataset.addSample( w_array, [7] )
+    dataset._convertToOneOfMany( )
     return dataset
 
-def train_network():
-    network = create_network()
-    dataset = prepare_dataset()
+def train_network( network, dataset ):
+    TRAIN_EPOCHS = 1000
     trainer = BackpropTrainer( network, dataset )
-    trainer.trainUntilConvergence()
+    for i in range( TRAIN_EPOCHS ):
+        trainer.trainEpochs( 5 )
+    return trainer
+
+def test_network( dataset, trainer ):
+    trnresult = percentError( trainer.testOnClassData(), dataset['class'] )
+    print "Clasification error percent: %5.2f%%" % trnresult
 
 def main():
-    train_network()
+    network = create_network()
+    dataset = prepare_dataset()
+    trainer = train_network( network, dataset )
+    test_network( dataset, trainer )
 
 if __name__ == "__main__":
     main()
