@@ -88,6 +88,26 @@ def prepare_dataset():
     dataset._convertToOneOfMany( )
     return dataset
 
+def prepare_dataset_with_one_malformed_letter( letter_filename, letter_class ):
+    # Prepare output coding. "-" is 1 "." is 0
+    d_morse_array = '100' # ( 1, 0, 0 ) # D -.. - 100
+    g_morse_array = '110' # ( 1, 1, 0 ) # G --. - 110
+    k_morse_array = '101' # ( 1, 0, 1 ) # K -.- - 101
+    o_morse_array = '111' # ( 1, 1, 1 ) # O --- - 111
+    r_morse_array = '010' # ( 0, 1, 0 ) # R .-. - 010
+    s_morse_array = '000' # ( 0, 0, 0 ) # S ... - 000
+    u_morse_array = '001' # ( 0, 0, 1 ) # U ..- - 001
+    w_morse_array = '011' # ( 0, 1, 1 ) # W .-- - 011
+    # Load learning data
+    letter_array = read_array( letter_filename )
+
+    # Create dataset
+    dataset = ClassificationDataSet( 1600, nb_classes=8, class_labels=[d_morse_array,g_morse_array,k_morse_array,o_morse_array,r_morse_array,s_morse_array,u_morse_array,w_morse_array] )
+    # add all samples to dataset
+    dataset.addSample( letter_array, letter_class )
+    dataset._convertToOneOfMany( )
+    return dataset
+
 def train_network( network, dataset ):
     TRAIN_EPOCHS = 200
     LEARNING_RATE = 0.0165
@@ -109,6 +129,7 @@ def main():
     dataset = prepare_dataset()
     trainer = train_network( network, dataset )
     test_network( dataset, trainer )
+    malformed_dataset = prepare_dataset_with_one_malformed_letter( "k_w", [2] )
 
 if __name__ == "__main__":
     main()
