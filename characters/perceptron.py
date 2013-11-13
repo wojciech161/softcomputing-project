@@ -89,21 +89,20 @@ def prepare_dataset():
     return dataset
 
 def train_network( network, dataset ):
-    TRAIN_EPOCHS = 100
-    LEARNING_RATE = 0.01
+    TRAIN_EPOCHS = 200
+    LEARNING_RATE = 0.0165
     LRDECAY = 1.0
-    MOMENTUM = 0.0
+    MOMENTUM = 0.6
     VERBOSE = False
     BATCHLEARNING = False
     WEIGHTDECAY = 0.0
     trainer = BackpropTrainer( network, dataset ,learningrate=LEARNING_RATE, lrdecay=LRDECAY, momentum=MOMENTUM, verbose=VERBOSE, batchlearning=BATCHLEARNING, weightdecay=WEIGHTDECAY )
-    for i in range( TRAIN_EPOCHS ):
-        trainer.trainEpochs( 5 )
+    trainer.trainEpochs( TRAIN_EPOCHS )
     return trainer
 
 def test_network( dataset, trainer ):
     trnresult = percentError( trainer.testOnClassData(), dataset['class'] )
-    print "Clasification error percent: %5.2f%%" % trnresult
+    print "Clasification error percent: %5.2f%%" % trnresult 
 
 def main():
     network = create_network()
