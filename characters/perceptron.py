@@ -104,12 +104,13 @@ def prepare_dataset_with_one_malformed_letter( letter_filename, letter_class ):
     # Create dataset
     dataset = ClassificationDataSet( 1600, nb_classes=8, class_labels=[d_morse_array,g_morse_array,k_morse_array,o_morse_array,r_morse_array,s_morse_array,u_morse_array,w_morse_array] )
     # add all samples to dataset
-    dataset.addSample( letter_array, letter_class )
-    dataset._convertToOneOfMany( )
+    for i in range(50):
+        dataset.addSample( letter_array, letter_class )
+    dataset._convertToOneOfMany( [0,1] )
     return dataset
 
 def train_network( network, dataset ):
-    TRAIN_EPOCHS = 200
+    TRAIN_EPOCHS = 300
     LEARNING_RATE = 0.0165
     LRDECAY = 1.0
     MOMENTUM = 0.6
@@ -128,8 +129,8 @@ def main():
     network = create_network()
     dataset = prepare_dataset()
     trainer = train_network( network, dataset )
-    test_network( dataset, trainer )
-    malformed_dataset = prepare_dataset_with_one_malformed_letter( "k_w", [2] )
+    malformed_dataset = prepare_dataset_with_one_malformed_letter( "d_rl1", [0] )
+    test_network( malformed_dataset, trainer )
 
 if __name__ == "__main__":
     main()
