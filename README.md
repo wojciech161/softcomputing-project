@@ -1,4 +1,5 @@
 softcomputing-project
 =====================
 
-Academic project for softcomputing
+Academic project for softcomputing.
+
