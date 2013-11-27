@@ -88,27 +88,6 @@ def prepare_dataset():
     dataset._convertToOneOfMany( )
     return dataset
 
-def prepare_dataset_with_one_malformed_letter( letter_filename, letter_class ):
-    # Prepare output coding. "-" is 1 "." is 0
-    d_morse_array = '100' # ( 1, 0, 0 ) # D -.. - 100
-    g_morse_array = '110' # ( 1, 1, 0 ) # G --. - 110
-    k_morse_array = '101' # ( 1, 0, 1 ) # K -.- - 101
-    o_morse_array = '111' # ( 1, 1, 1 ) # O --- - 111
-    r_morse_array = '010' # ( 0, 1, 0 ) # R .-. - 010
-    s_morse_array = '000' # ( 0, 0, 0 ) # S ... - 000
-    u_morse_array = '001' # ( 0, 0, 1 ) # U ..- - 001
-    w_morse_array = '011' # ( 0, 1, 1 ) # W .-- - 011
-    # Load learning data
-    letter_array = read_array( letter_filename )
-
-    # Create dataset
-    dataset = ClassificationDataSet( 1600, nb_classes=8, class_labels=[d_morse_array,g_morse_array,k_morse_array,o_morse_array,r_morse_array,s_morse_array,u_morse_array,w_morse_array] )
-    # add all samples to dataset
-    for i in range(10):
-        dataset.addSample( letter_array, letter_class )
-    dataset._convertToOneOfMany( [0,1] )
-    return dataset
-
 def train_network( network, dataset ):
     TRAIN_EPOCHS = 300
     LEARNING_RATE = 0.0165
@@ -127,16 +106,19 @@ def check_clasify_result( result_vector, letter_number ):
 
 
 def test_letter( network, letter, letter_index ):
-    TESTS_NUMBER = 10
+    HOW_MUCH_TESTS_TO_DO = 100
     good_classification = 0
-    for test in range(TESTS_NUMBER):
+    for test in range(HOW_MUCH_TESTS_TO_DO):
         result_vector = network.activate( letter )
         if check_clasify_result( result_vector, letter_index ):
             good_classification = good_classification + 1
 
     return good_classification
 
-def test_not_malformed_letters( letter_name, letter_index ):
+def test_not_malformed_letters( network ):
+    RESULT_FILE_NAME = "result.txt"
+    APPEND_FLAG = "a"
+    result_file = open( RESULT_FILE_NAME, APPEND_FLAG )
     d_index = 0
     g_index = 1
     k_index = 2
@@ -146,12 +128,51 @@ def test_not_malformed_letters( letter_name, letter_index ):
     u_index = 6
     w_index = 7
 
+    d_array = read_array( "d" )
+    g_array = read_array( "g" )
+    k_array = read_array( "k" )
+    o_array = read_array( "o" )
+    r_array = read_array( "r" )
+    s_array = read_array( "s" )
+    u_array = read_array( "u" )
+    w_array = read_array( "w" )
+
+    result_file.write( "\nTesting NOT MALFORMED letters\n" )
+    print "Testing NOT MALFORMED letters"
+
+    d_result = test_letter( network, d_array, d_index )
+    g_result = test_letter( network, g_array, g_index )
+    k_result = test_letter( network, k_array, k_index )
+    o_result = test_letter( network, o_array, o_index )
+    r_result = test_letter( network, r_array, r_index )
+    s_result = test_letter( network, s_array, s_index )
+    u_result = test_letter( network, u_array, u_index )
+    w_result = test_letter( network, w_array, w_index )
+
+    print "d Result: " + str(d_result)
+    result_file.write( "d Result: " + str( d_result ) + "\n" )
+    print "g Result: " + str(g_result)
+    result_file.write( "g Result: " + str( g_result ) + "\n" )
+    print "k Result: " + str(k_result)
+    result_file.write( "k Result: " + str( k_result ) + "\n" )
+    print "o Result: " + str(o_result)
+    result_file.write( "o Result: " + str( o_result ) + "\n" )
+    print "r Result: " + str(r_result)
+    result_file.write( "r Result: " + str( r_result ) + "\n" )
+    print "s Result: " + str(s_result)
+    result_file.write( "s Result: " + str( s_result ) + "\n" )
+    print "u Result: " + str(u_result)
+    result_file.write( "u Result: " + str( u_result ) + "\n" )
+    print "w Result: " + str(w_result)
+    result_file.write( "w Result: " + str( w_result ) + "\n" )
+
+    result_file.close()
+
 def main():
     network = create_network()
     dataset = prepare_dataset()
     trainer = train_network( network, dataset )
-    g_array = read_array( "g" )
-    print test_letter( network, g_array, 1 )
+    test_not_malformed_letters( network )
 
 if __name__ == "__main__":
     main()
