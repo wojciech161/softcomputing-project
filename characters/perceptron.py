@@ -3,6 +3,9 @@ from pybrain.structure import FeedForwardNetwork, LinearLayer, SigmoidLayer, Ful
 from pybrain.datasets import ClassificationDataSet
 from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.utilities           import percentError
+from noise import create_character_white_noise, create_character_noise_remove_line
+
+HOW_MUCH_TESTS_TO_DO = 50
 
 def read_array( letter ):
     FILE_SIZE = 40 * 40 # image size is 40x40
@@ -29,7 +32,7 @@ def create_network():
     network = FeedForwardNetwork()
     # Create layers
     NUMBER_OF_INPUT_BYTES = 1600 # because at input we have picture 40x40 size
-    NUMBER_OF_HIDDEN_LAYERS = 10 # number of hidden layers
+    NUMBER_OF_HIDDEN_LAYERS = 5  # number of hidden layers
     NUMBER_OF_OUTPUT_CLASSES = 8 # because in output we have 8 classes
     inLayer = LinearLayer( NUMBER_OF_INPUT_BYTES )
     hiddenLayer = SigmoidLayer( NUMBER_OF_HIDDEN_LAYERS )
@@ -104,7 +107,6 @@ def check_clasify_result( result_vector, letter_number ):
 
 
 def test_letter( letter, letter_index ):
-    HOW_MUCH_TESTS_TO_DO = 10
     good_classification = 0
     for test in range(HOW_MUCH_TESTS_TO_DO):
 
@@ -122,6 +124,7 @@ def test_not_malformed_letters():
     RESULT_FILE_NAME = "result.txt"
     APPEND_FLAG = "a"
     result_file = open( RESULT_FILE_NAME, APPEND_FLAG )
+
     d_index = 0
     g_index = 1
     k_index = 2
@@ -143,14 +146,244 @@ def test_not_malformed_letters():
     result_file.write( "\nTesting NOT MALFORMED letters\n" )
     print "Testing NOT MALFORMED letters"
 
-    d_result = test_letter( d_array, d_index ) * 10
-    g_result = test_letter( g_array, g_index ) * 10
-    k_result = test_letter( k_array, k_index ) * 10
-    o_result = test_letter( o_array, o_index ) * 10
-    r_result = test_letter( r_array, r_index ) * 10
-    s_result = test_letter( s_array, s_index ) * 10
-    u_result = test_letter( u_array, u_index ) * 10
-    w_result = test_letter( w_array, w_index ) * 10
+    d_result = test_letter( d_array, d_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    g_result = test_letter( g_array, g_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    k_result = test_letter( k_array, k_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    o_result = test_letter( o_array, o_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    r_result = test_letter( r_array, r_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    s_result = test_letter( s_array, s_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    u_result = test_letter( u_array, u_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    w_result = test_letter( w_array, w_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+
+    print "d Result: " + str(d_result) + "%"
+    result_file.write( "d Result: " + str( d_result ) + "%\n" )
+    print "g Result: " + str(g_result) + "%"
+    result_file.write( "g Result: " + str( g_result ) + "%\n" )
+    print "k Result: " + str(k_result) + "%"
+    result_file.write( "k Result: " + str( k_result ) + "%\n" )
+    print "o Result: " + str(o_result) + "%"
+    result_file.write( "o Result: " + str( o_result ) + "%\n" )
+    print "r Result: " + str(r_result) + "%"
+    result_file.write( "r Result: " + str( r_result ) + "%\n" )
+    print "s Result: " + str(s_result) + "%"
+    result_file.write( "s Result: " + str( s_result ) + "%\n" )
+    print "u Result: " + str(u_result) + "%"
+    result_file.write( "u Result: " + str( u_result ) + "%\n" )
+    print "w Result: " + str(w_result) + "%"
+    result_file.write( "w Result: " + str( w_result ) + "%\n" )
+
+    result_file.close()
+
+def test_letters_with_noise():
+    RESULT_FILE_NAME = "result.txt"
+    APPEND_FLAG = "a"
+    result_file = open( RESULT_FILE_NAME, APPEND_FLAG )
+
+    d_index = 0
+    g_index = 1
+    k_index = 2
+    o_index = 3
+    r_index = 4
+    s_index = 5
+    u_index = 6
+    w_index = 7
+
+    fibonacci = [1, 2, 3, 5, 8, 13, 21, 34, 55]
+    characters = [ 'd', 'g', 'k', 'o', 'r', 's', 'u', 'w' ]
+    for fib in fibonacci:
+        for letter in characters:
+            create_character_white_noise(letter, '_w', fib)
+
+        d_array = read_array( "d_w" )
+        g_array = read_array( "g_w" )
+        k_array = read_array( "k_w" )
+        o_array = read_array( "o_w" )
+        r_array = read_array( "r_w" )
+        s_array = read_array( "s_w" )
+        u_array = read_array( "u_w" )
+        w_array = read_array( "w_w" )
+
+        result_file.write( "\nTesting letters with white noise: " + str(fib) + "%\n" )
+        print "Testing letters with white noise: " + str(fib) + "%"
+
+        d_result = test_letter( d_array, d_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+        g_result = test_letter( g_array, g_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+        k_result = test_letter( k_array, k_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+        o_result = test_letter( o_array, o_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+        r_result = test_letter( r_array, r_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+        s_result = test_letter( s_array, s_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+        u_result = test_letter( u_array, u_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+        w_result = test_letter( w_array, w_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+
+        print "d Result: " + str(d_result) + "%"
+        result_file.write( "d Result: " + str( d_result ) + "%\n" )
+        print "g Result: " + str(g_result) + "%"
+        result_file.write( "g Result: " + str( g_result ) + "%\n" )
+        print "k Result: " + str(k_result) + "%"
+        result_file.write( "k Result: " + str( k_result ) + "%\n" )
+        print "o Result: " + str(o_result) + "%"
+        result_file.write( "o Result: " + str( o_result ) + "%\n" )
+        print "r Result: " + str(r_result) + "%"
+        result_file.write( "r Result: " + str( r_result ) + "%\n" )
+        print "s Result: " + str(s_result) + "%"
+        result_file.write( "s Result: " + str( s_result ) + "%\n" )
+        print "u Result: " + str(u_result) + "%"
+        result_file.write( "u Result: " + str( u_result ) + "%\n" )
+        print "w Result: " + str(w_result) + "%"
+        result_file.write( "w Result: " + str( w_result ) + "%\n" )
+
+
+    result_file.close()
+
+def test_letters_with_missing_lines():
+    RESULT_FILE_NAME = "result.txt"
+    APPEND_FLAG = "a"
+    result_file = open( RESULT_FILE_NAME, APPEND_FLAG )
+
+    d_index = 0
+    g_index = 1
+    k_index = 2
+    o_index = 3
+    r_index = 4
+    s_index = 5
+    u_index = 6
+    w_index = 7
+
+    lines_to_remove = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    characters = [ 'd', 'g', 'k', 'o', 'r', 's', 'u', 'w' ]
+    for rem_lines in lines_to_remove:
+        for letter in characters:
+            create_character_noise_remove_line(letter, '_rl', rem_lines)
+
+        d_array = read_array( "d_rl" )
+        g_array = read_array( "g_rl" )
+        k_array = read_array( "k_rl" )
+        o_array = read_array( "o_rl" )
+        r_array = read_array( "r_rl" )
+        s_array = read_array( "s_rl" )
+        u_array = read_array( "u_rl" )
+        w_array = read_array( "w_rl" )
+
+        result_file.write( "\nTesting letters with " + str(rem_lines) + "removed lines\n" )
+        print "Testing letters with " + str(rem_lines) + "removed lines"
+
+        d_result = test_letter( d_array, d_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+        g_result = test_letter( g_array, g_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+        k_result = test_letter( k_array, k_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+        o_result = test_letter( o_array, o_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+        r_result = test_letter( r_array, r_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+        s_result = test_letter( s_array, s_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+        u_result = test_letter( u_array, u_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+        w_result = test_letter( w_array, w_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+
+        print "d Result: " + str(d_result) + "%"
+        result_file.write( "d Result: " + str( d_result ) + "%\n" )
+        print "g Result: " + str(g_result) + "%"
+        result_file.write( "g Result: " + str( g_result ) + "%\n" )
+        print "k Result: " + str(k_result) + "%"
+        result_file.write( "k Result: " + str( k_result ) + "%\n" )
+        print "o Result: " + str(o_result) + "%"
+        result_file.write( "o Result: " + str( o_result ) + "%\n" )
+        print "r Result: " + str(r_result) + "%"
+        result_file.write( "r Result: " + str( r_result ) + "%\n" )
+        print "s Result: " + str(s_result) + "%"
+        result_file.write( "s Result: " + str( s_result ) + "%\n" )
+        print "u Result: " + str(u_result) + "%"
+        result_file.write( "u Result: " + str( u_result ) + "%\n" )
+        print "w Result: " + str(w_result) + "%"
+        result_file.write( "w Result: " + str( w_result ) + "%\n" )
+
+
+    result_file.close()
+
+def test_serial_letters():
+    RESULT_FILE_NAME = "result.txt"
+    APPEND_FLAG = "a"
+    result_file = open( RESULT_FILE_NAME, APPEND_FLAG )
+
+    d_index = 0
+    g_index = 1
+    k_index = 2
+    o_index = 3
+    r_index = 4
+    s_index = 5
+    u_index = 6
+    w_index = 7
+
+    d_array = read_array( "d_s" )
+    g_array = read_array( "g_s" )
+    k_array = read_array( "k_s" )
+    o_array = read_array( "o_s" )
+    r_array = read_array( "r_s" )
+    s_array = read_array( "s_s" )
+    u_array = read_array( "u_s" )
+    w_array = read_array( "w_s" )
+
+    result_file.write( "\nTesting SERIAL letters\n" )
+    print "Testing SERIAL letters"
+
+    d_result = test_letter( d_array, d_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    g_result = test_letter( g_array, g_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    k_result = test_letter( k_array, k_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    o_result = test_letter( o_array, o_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    r_result = test_letter( r_array, r_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    s_result = test_letter( s_array, s_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    u_result = test_letter( u_array, u_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    w_result = test_letter( w_array, w_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+
+    print "d Result: " + str(d_result) + "%"
+    result_file.write( "d Result: " + str( d_result ) + "%\n" )
+    print "g Result: " + str(g_result) + "%"
+    result_file.write( "g Result: " + str( g_result ) + "%\n" )
+    print "k Result: " + str(k_result) + "%"
+    result_file.write( "k Result: " + str( k_result ) + "%\n" )
+    print "o Result: " + str(o_result) + "%"
+    result_file.write( "o Result: " + str( o_result ) + "%\n" )
+    print "r Result: " + str(r_result) + "%"
+    result_file.write( "r Result: " + str( r_result ) + "%\n" )
+    print "s Result: " + str(s_result) + "%"
+    result_file.write( "s Result: " + str( s_result ) + "%\n" )
+    print "u Result: " + str(u_result) + "%"
+    result_file.write( "u Result: " + str( u_result ) + "%\n" )
+    print "w Result: " + str(w_result) + "%"
+    result_file.write( "w Result: " + str( w_result ) + "%\n" )
+
+    result_file.close()
+
+def test_arial_letters():
+    RESULT_FILE_NAME = "result.txt"
+    APPEND_FLAG = "a"
+    result_file = open( RESULT_FILE_NAME, APPEND_FLAG )
+
+    d_index = 0
+    g_index = 1
+    k_index = 2
+    o_index = 3
+    r_index = 4
+    s_index = 5
+    u_index = 6
+    w_index = 7
+
+    d_array = read_array( "d_a" )
+    g_array = read_array( "g_a" )
+    k_array = read_array( "k_a" )
+    o_array = read_array( "o_a" )
+    r_array = read_array( "r_a" )
+    s_array = read_array( "s_a" )
+    u_array = read_array( "u_a" )
+    w_array = read_array( "w_a" )
+
+    result_file.write( "\nTesting ARIAL letters\n" )
+    print "Testing ARIAL letters"
+
+    d_result = test_letter( d_array, d_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    g_result = test_letter( g_array, g_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    k_result = test_letter( k_array, k_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    o_result = test_letter( o_array, o_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    r_result = test_letter( r_array, r_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    s_result = test_letter( s_array, s_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    u_result = test_letter( u_array, u_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
+    w_result = test_letter( w_array, w_index ) * (100.00 / HOW_MUCH_TESTS_TO_DO)
 
     print "d Result: " + str(d_result) + "%"
     result_file.write( "d Result: " + str( d_result ) + "%\n" )
@@ -173,6 +406,10 @@ def test_not_malformed_letters():
 
 def main():
     test_not_malformed_letters()
+    test_letters_with_noise()
+    test_letters_with_missing_lines()
+    test_serial_letters()
+    test_arial_letters()
 
 if __name__ == "__main__":
     main()

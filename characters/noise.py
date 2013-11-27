@@ -10,15 +10,15 @@ def create_character(letter,file_tag):
 	character.save_array_to_file(array_img, letter, file_tag)
 	character.save_array_as_img(array_img, letter, file_tag)
 
-def create_character_white_noise(letter, file_tag):
+def create_character_white_noise(letter, file_tag, noise_percent):
 	array_img = character.read_array_from_file(letter, '')
-	character.add_white_noise(array_img, 5) # percent
+	character.add_white_noise(array_img, noise_percent) # percent
 	character.save_array_to_file(array_img, letter, file_tag)
 	character.save_array_as_img(array_img, letter, file_tag)
 
-def create_character_noise_remove_line(letter, file_tag):
+def create_character_noise_remove_line(letter, file_tag, removed_lines):
 	array_img = character.read_array_from_file(letter, '')
-	character.add_noise_remove_line(array_img, 10) # number of lines
+	character.add_noise_remove_line(array_img, removed_lines) # number of lines
 	character.save_array_to_file(array_img, letter, file_tag)
 	character.save_array_as_img(array_img, letter, file_tag)
 
@@ -27,8 +27,8 @@ def main():
 		create_character(letter, '') # Times New Roman
 		create_character(letter, '_s') # Serif
 		create_character(letter, '_a') # Arial
-		create_character_white_noise(letter, '_w')
-		create_character_noise_remove_line(letter, '_rl')
+		create_character_white_noise(letter, '_w', 1)
+		create_character_noise_remove_line(letter, '_rl', 1)
 
 if __name__ == "__main__":
     main()
