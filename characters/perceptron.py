@@ -104,7 +104,7 @@ def prepare_dataset_with_one_malformed_letter( letter_filename, letter_class ):
     # Create dataset
     dataset = ClassificationDataSet( 1600, nb_classes=8, class_labels=[d_morse_array,g_morse_array,k_morse_array,o_morse_array,r_morse_array,s_morse_array,u_morse_array,w_morse_array] )
     # add all samples to dataset
-    for i in range(50):
+    for i in range(10):
         dataset.addSample( letter_array, letter_class )
     dataset._convertToOneOfMany( [0,1] )
     return dataset
@@ -121,16 +121,37 @@ def train_network( network, dataset ):
     trainer.trainEpochs( TRAIN_EPOCHS )
     return trainer
 
-def test_network( dataset, trainer ):
-    trnresult = percentError( trainer.testOnClassData(), dataset['class'] )
-    print "Clasification error percent: %5.2f%%" % trnresult 
+def check_clasify_result( result_vector, letter_number ):
+    max_value = max( result_vector )
+    return result_vector[letter_number] == max_value
+
+
+def test_letter( network, letter, letter_index ):
+    TESTS_NUMBER = 10
+    good_classification = 0
+    for test in range(TESTS_NUMBER):
+        result_vector = network.activate( letter )
+        if check_clasify_result( result_vector, letter_index ):
+            good_classification = good_classification + 1
+
+    return good_classification
+
+def test_not_malformed_letters( letter_name, letter_index ):
+    d_index = 0
+    g_index = 1
+    k_index = 2
+    o_index = 3
+    r_index = 4
+    s_index = 5
+    u_index = 6
+    w_index = 7
 
 def main():
     network = create_network()
     dataset = prepare_dataset()
     trainer = train_network( network, dataset )
-    malformed_dataset = prepare_dataset_with_one_malformed_letter( "d_rl1", [0] )
-    test_network( malformed_dataset, trainer )
+    g_array = read_array( "g" )
+    print test_letter( network, g_array, 1 )
 
 if __name__ == "__main__":
     main()
