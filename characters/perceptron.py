@@ -7,7 +7,6 @@ from pybrain.utilities           import percentError
 def read_array( letter ):
     FILE_SIZE = 40 * 40 # image size is 40x40
     letter_filename = "40x40mono/" + letter + "_array.txt"
-    print( "Loading: " + letter_filename )
     letter_file = open( letter_filename, 'r' )
     letter_array = []
     for current_byte in range( FILE_SIZE ):
@@ -26,7 +25,6 @@ def test_array_print( letter_array ):
         sys.stdout.write( "\n" )
 
 def create_network():
-    print "Creating network."
     # Create the network itself
     network = FeedForwardNetwork()
     # Create layers
@@ -105,17 +103,22 @@ def check_clasify_result( result_vector, letter_number ):
     return result_vector[letter_number] == max_value
 
 
-def test_letter( network, letter, letter_index ):
-    HOW_MUCH_TESTS_TO_DO = 100
+def test_letter( letter, letter_index ):
+    HOW_MUCH_TESTS_TO_DO = 10
     good_classification = 0
     for test in range(HOW_MUCH_TESTS_TO_DO):
+
+        network = create_network()
+        dataset = prepare_dataset()
+        trainer = train_network( network, dataset )
+
         result_vector = network.activate( letter )
         if check_clasify_result( result_vector, letter_index ):
             good_classification = good_classification + 1
 
     return good_classification
 
-def test_not_malformed_letters( network ):
+def test_not_malformed_letters():
     RESULT_FILE_NAME = "result.txt"
     APPEND_FLAG = "a"
     result_file = open( RESULT_FILE_NAME, APPEND_FLAG )
@@ -140,39 +143,36 @@ def test_not_malformed_letters( network ):
     result_file.write( "\nTesting NOT MALFORMED letters\n" )
     print "Testing NOT MALFORMED letters"
 
-    d_result = test_letter( network, d_array, d_index )
-    g_result = test_letter( network, g_array, g_index )
-    k_result = test_letter( network, k_array, k_index )
-    o_result = test_letter( network, o_array, o_index )
-    r_result = test_letter( network, r_array, r_index )
-    s_result = test_letter( network, s_array, s_index )
-    u_result = test_letter( network, u_array, u_index )
-    w_result = test_letter( network, w_array, w_index )
+    d_result = test_letter( d_array, d_index ) * 10
+    g_result = test_letter( g_array, g_index ) * 10
+    k_result = test_letter( k_array, k_index ) * 10
+    o_result = test_letter( o_array, o_index ) * 10
+    r_result = test_letter( r_array, r_index ) * 10
+    s_result = test_letter( s_array, s_index ) * 10
+    u_result = test_letter( u_array, u_index ) * 10
+    w_result = test_letter( w_array, w_index ) * 10
 
-    print "d Result: " + str(d_result)
-    result_file.write( "d Result: " + str( d_result ) + "\n" )
-    print "g Result: " + str(g_result)
-    result_file.write( "g Result: " + str( g_result ) + "\n" )
-    print "k Result: " + str(k_result)
-    result_file.write( "k Result: " + str( k_result ) + "\n" )
-    print "o Result: " + str(o_result)
-    result_file.write( "o Result: " + str( o_result ) + "\n" )
-    print "r Result: " + str(r_result)
-    result_file.write( "r Result: " + str( r_result ) + "\n" )
-    print "s Result: " + str(s_result)
-    result_file.write( "s Result: " + str( s_result ) + "\n" )
-    print "u Result: " + str(u_result)
-    result_file.write( "u Result: " + str( u_result ) + "\n" )
-    print "w Result: " + str(w_result)
-    result_file.write( "w Result: " + str( w_result ) + "\n" )
+    print "d Result: " + str(d_result) + "%"
+    result_file.write( "d Result: " + str( d_result ) + "%\n" )
+    print "g Result: " + str(g_result) + "%"
+    result_file.write( "g Result: " + str( g_result ) + "%\n" )
+    print "k Result: " + str(k_result) + "%"
+    result_file.write( "k Result: " + str( k_result ) + "%\n" )
+    print "o Result: " + str(o_result) + "%"
+    result_file.write( "o Result: " + str( o_result ) + "%\n" )
+    print "r Result: " + str(r_result) + "%"
+    result_file.write( "r Result: " + str( r_result ) + "%\n" )
+    print "s Result: " + str(s_result) + "%"
+    result_file.write( "s Result: " + str( s_result ) + "%\n" )
+    print "u Result: " + str(u_result) + "%"
+    result_file.write( "u Result: " + str( u_result ) + "%\n" )
+    print "w Result: " + str(w_result) + "%"
+    result_file.write( "w Result: " + str( w_result ) + "%\n" )
 
     result_file.close()
 
 def main():
-    network = create_network()
-    dataset = prepare_dataset()
-    trainer = train_network( network, dataset )
-    test_not_malformed_letters( network )
+    test_not_malformed_letters()
 
 if __name__ == "__main__":
     main()
