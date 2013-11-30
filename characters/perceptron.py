@@ -5,7 +5,7 @@ from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.utilities           import percentError
 from noise import create_character_white_noise, create_character_noise_remove_line
 
-HOW_MUCH_TESTS_TO_DO = 50
+HOW_MUCH_TESTS_TO_DO = 33
 
 def read_array( letter ):
     FILE_SIZE = 40 * 40 # image size is 40x40
@@ -32,7 +32,7 @@ def create_network():
     network = FeedForwardNetwork()
     # Create layers
     NUMBER_OF_INPUT_BYTES = 1600 # because at input we have picture 40x40 size
-    NUMBER_OF_HIDDEN_LAYERS = 5  # number of hidden layers
+    NUMBER_OF_HIDDEN_LAYERS = 10  # number of hidden layers
     NUMBER_OF_OUTPUT_CLASSES = 8 # because in output we have 8 classes
     inLayer = LinearLayer( NUMBER_OF_INPUT_BYTES )
     hiddenLayer = SigmoidLayer( NUMBER_OF_HIDDEN_LAYERS )
@@ -91,7 +91,7 @@ def prepare_dataset():
 
 def train_network( network, dataset ):
     TRAIN_EPOCHS = 300
-    LEARNING_RATE = 0.0165
+    LEARNING_RATE = 0.0175
     LRDECAY = 1.0
     MOMENTUM = 0.6
     VERBOSE = False
